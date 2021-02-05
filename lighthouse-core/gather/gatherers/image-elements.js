@@ -249,6 +249,10 @@ class ImageElements extends Gatherer {
   }
 
   /**
+   * Images might be sized via CSS. In order to compute unsized-images failures, we need to collect
+   * matched CSS rules to see if this is the case.
+   * Perf warning: Running this for 700 elements takes 1s to 5s.
+   * @url http://go/dwoqq (googlers only)
    * @param {Driver} driver
    * @param {string} devtoolsNodePath
    * @param {LH.Artifacts.ImageElement} element
@@ -322,7 +326,8 @@ class ImageElements extends Gatherer {
       const networkRecord = indexedNetworkRecords[element.src] || {};
       element.mimeType = networkRecord.mimeType;
 
-      if (!element.isInShadowDOM && !element.isCss) {
+      // Need source rules to determine if sized via CSS (for unsized-images).
+      if (!element.isInShadowDOM && !element.isCss && top50Images.includes(networkRecord)) {
         await this.fetchSourceRules(driver, element.node.devtoolsNodePath, element);
       }
       // Images within `picture` behave strangely and natural size information isn't accurate,
