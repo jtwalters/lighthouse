@@ -10,7 +10,7 @@ const UnsizedImagesAudit = require('../../audits/unsized-images.js');
 /* eslint-env jest */
 
 function generateImage(props, src = 'https://google.com/logo.png', isCss = false,
-  isInShadowDOM = false, cssComputedPosition = 'static', node = {boundingRect:{}}) {
+  isInShadowDOM = false, cssComputedPosition = 'static', node = {boundingRect: {}}) {
   const image = {src, isCss, isInShadowDOM, cssComputedPosition, node};
   Object.assign(image, props);
   return image;
@@ -244,13 +244,28 @@ describe('Sized images audit', () => {
         node: {
           boundingRect: {
             width: 0,
-            height: 0
-          }
-        }
+            height: 0,
+          },
+        },
       });
       expect(result.score).toEqual(1);
     });
 
+    it('passes when an image has is unsized, but its parent is not displayed..', async () => {
+      const result = await runAudit({
+        attributeWidth: '',
+        attributeHeight: '',
+        cssWidth: '',
+        cssHeight: '',
+        node: {
+          boundingRect: {
+            width: 0,
+            height: 0,
+          },
+        },
+      });
+      expect(result.score).toEqual(1);
+    });
   });
 
   describe('has invalid width', () => {
@@ -418,19 +433,19 @@ describe('Size attribute validity check', () => {
     expect(UnsizedImagesAudit.isValidAttr('')).toEqual(false);
   });
 
-  it('fails on non-numeric characters', () => {
+  it('handles non-numeric edgecases', () => {
     expect(UnsizedImagesAudit.isValidAttr('zero')).toEqual(false);
-    expect(UnsizedImagesAudit.isValidAttr('1002$')).toEqual(false);
+    expect(UnsizedImagesAudit.isValidAttr('1002$')).toEqual(true); // interpretted as 1002
     expect(UnsizedImagesAudit.isValidAttr('s-5')).toEqual(false);
-    expect(UnsizedImagesAudit.isValidAttr('3,000')).toEqual(false);
-    expect(UnsizedImagesAudit.isValidAttr('100.0')).toEqual(false);
-    expect(UnsizedImagesAudit.isValidAttr('2/3')).toEqual(false);
+    expect(UnsizedImagesAudit.isValidAttr('3,000')).toEqual(true); // interpretted as 3
+    expect(UnsizedImagesAudit.isValidAttr('100.0')).toEqual(true); // interpretted as 100
+    expect(UnsizedImagesAudit.isValidAttr('2/3')).toEqual(true); // interpretted as 2
     expect(UnsizedImagesAudit.isValidAttr('-2020')).toEqual(false);
-    expect(UnsizedImagesAudit.isValidAttr('+2020')).toEqual(false);
+    expect(UnsizedImagesAudit.isValidAttr('+2020')).toEqual(false); // see isValidAttr comments about positive-sign
   });
 
-  it('fails on zero input', () => {
-    expect(UnsizedImagesAudit.isValidAttr('0')).toEqual(false);
+  it('passes on zero input', () => {
+    expect(UnsizedImagesAudit.isValidAttr('0')).toEqual(true);
   });
 
   it('passes on non-zero non-negative integer input', () => {

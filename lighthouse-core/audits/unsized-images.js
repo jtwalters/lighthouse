@@ -40,15 +40,23 @@ class UnsizedImages extends Audit {
   }
 
   /**
-   * An img size attribute is valid for preventing CLS
-   * if it is a non-negative, non-zero integer.
-   * @param {string} attr
+   * An img size attribute is valid if it is a non-negative integer (incl zero!).
+   * @url https://html.spec.whatwg.org/multipage/embedded-content-other.html#dimension-attributes
+   * @param {string} attrValue
    * @return {boolean}
    */
-  static isValidAttr(attr) {
-    const NON_NEGATIVE_INT_REGEX = /^\d+$/;
-    const ZERO_REGEX = /^0+$/;
-    return NON_NEGATIVE_INT_REGEX.test(attr) && !ZERO_REGEX.test(attr);
+  static isValidAttr(attrValue) {
+    // First, superweird edge case of using the positive-sign. The the spec _sorta_ says it's valid...
+    // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#rules-for-parsing-integers
+    //   > Otherwise, if the character is … (+): Advance position to the next character.
+    //   > (The "+" is ignored, but it is not conforming.)
+    // lol.  Chrome (at least) doesn't ignore but rejects this as a non-conforming value.
+    if (attrValue.startsWith('+')) return false;
+
+    // parseInt isn't exactly the same as the html's spec for parsing integers, but it's close enough
+    // https://tc39.es/ecma262/#sec-parseint-string-radix
+    const int = parseInt(attrValue, 10);
+    return int >= 0;
   }
 
   /**
@@ -96,14 +104,13 @@ class UnsizedImages extends Audit {
         image.cssComputedPosition === 'fixed' || image.cssComputedPosition === 'absolute';
       if (isFixedImage) continue;
 
-      // Zero-sized images won't cause layout shift. We approve!
-      const boundingRect = image.node.boundingRect;
-      // Either the image was set to 0,0 size or a parent is not displayed.
-      const isNotDisplayed = boundingRect.width === 0 && boundingRect.height === 0;
-      if (isNotDisplayed) continue;
-
       // The image was sized with HTML or CSS. Good job.
       if (UnsizedImages.isSizedImage(image)) continue;
+
+      // Images with a 0-size bounding rect (due to hidden parent) aren't part of layout. Cool.
+      const boundingRect = image.node.boundingRect;
+      const isNotDisplayed = boundingRect.width === 0 && boundingRect.height === 0;
+      if (isNotDisplayed) continue;
 
       unsizedImages.push({
         url: URL.elideDataURI(image.src),
