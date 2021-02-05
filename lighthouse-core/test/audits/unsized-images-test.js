@@ -10,7 +10,7 @@ const UnsizedImagesAudit = require('../../audits/unsized-images.js');
 /* eslint-env jest */
 
 function generateImage(props, src = 'https://google.com/logo.png', isCss = false,
-  isInShadowDOM = false, cssComputedPosition = 'static', node = {}) {
+  isInShadowDOM = false, cssComputedPosition = 'static', node = {boundingRect:{}}) {
   const image = {src, isCss, isInShadowDOM, cssComputedPosition, node};
   Object.assign(image, props);
   return image;
@@ -234,6 +234,23 @@ describe('Sized images audit', () => {
       });
       expect(result.score).toEqual(1);
     });
+
+    it('passes when an image has attribute width/height of zero', async () => {
+      const result = await runAudit({
+        attributeWidth: '0',
+        attributeHeight: '0',
+        cssWidth: '',
+        cssHeight: '',
+        node: {
+          boundingRect: {
+            width: 0,
+            height: 0
+          }
+        }
+      });
+      expect(result.score).toEqual(1);
+    });
+
   });
 
   describe('has invalid width', () => {

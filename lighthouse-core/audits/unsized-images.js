@@ -91,15 +91,15 @@ class UnsizedImages extends Audit {
     const unsizedImages = [];
 
     for (const image of images) {
+      // Fixed images are out of document flow and won't cause layout shifts
       const isFixedImage =
         image.cssComputedPosition === 'fixed' || image.cssComputedPosition === 'absolute';
-      // Fixed images are out of document flow and won't cause layout shifts
       if (isFixedImage) continue;
 
+      // Zero-sized images won't cause layout shift. We approve!
       const boundingRect = image.node.boundingRect;
       // Either the image was set to 0,0 size or a parent is not displayed.
       const isNotDisplayed = boundingRect.width === 0 && boundingRect.height === 0;
-      // Zero-sized images won't cause layout shift. We approve!
       if (isNotDisplayed) continue;
 
       // The image was sized with HTML or CSS. Good job.
