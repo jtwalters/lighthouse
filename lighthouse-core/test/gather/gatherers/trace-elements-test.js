@@ -514,7 +514,7 @@ describe('Trace Elements gatherer - Animated Elements', () => {
           old_rect: [0, 100, 200, 200],
           new_rect: [0, 300, 200, 200], // shift down 200px
         },
-        {  // 2nd LS node that will be 'no node found'
+        { // 2nd LS node that will be 'no node found'
           node_id: 7,
           old_rect: [400, 100, 200, 200],
           new_rect: [400, 300, 200, 200], // shift down 200px
