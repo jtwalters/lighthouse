@@ -312,14 +312,23 @@ class ImageElements extends Gatherer {
 
     /** @type {Array<LH.Artifacts.ImageElement>} */
     const imageUsage = [];
-    const top50Images = Object.values(indexedNetworkRecords)
-      .sort((a, b) => b.resourceSize - a.resourceSize)
-      .slice(0, 50);
+
     await Promise.all([
       driver.sendCommand('DOM.enable'),
       driver.sendCommand('CSS.enable'),
       driver.sendCommand('DOM.getDocument', {depth: -1, pierce: true}),
     ]);
+
+    // Sort (in-place) as largest images descending
+    elements.sort((a, b) => {
+      const aRecord = indexedNetworkRecords[a.src] || {};
+      const bRecord = indexedNetworkRecords[b.src] || {};
+      return bRecord.resourceSize - aRecord.resourceSize;
+    });
+
+    // Don't allow more than 3s of this expensive protocol work
+    let hasBudget = true;
+    setTimeout(_ => (hasBudget = false), 3000);
 
     for (let element of elements) {
       // Pull some of our information directly off the network record.
@@ -327,16 +336,15 @@ class ImageElements extends Gatherer {
       element.mimeType = networkRecord.mimeType;
 
       // Need source rules to determine if sized via CSS (for unsized-images).
-      if (!element.isInShadowDOM && !element.isCss && top50Images.includes(networkRecord)) {
+      if (!element.isInShadowDOM && !element.isCss && hasBudget) {
         await this.fetchSourceRules(driver, element.node.devtoolsNodePath, element);
       }
       // Images within `picture` behave strangely and natural size information isn't accurate,
       // CSS images have no natural size information at all. Try to get the actual size if we can.
-      // Additional fetch is expensive; don't bother if we don't have a networkRecord for the image,
-      // or it's not in the top 50 largest images.
+      // Additional fetch is expensive; don't bother if we don't have a networkRecord for the image
       if (
         (element.isPicture || element.isCss || element.srcset) &&
-        top50Images.includes(networkRecord)
+        networkRecord && hasBudget
       ) {
         element = await this.fetchElementWithSizeInformation(driver, element);
       }
