@@ -22,6 +22,11 @@ async function runA11yChecks() {
   /** @type {import('axe-core/axe')} */
   // @ts-expect-error axe defined by axeLibSource
   const axe = window.axe;
+  axe.configure({
+    branding: {
+      application: `lighthouse-${Math.random()}`,
+    },
+  });
   const axeResults = await axe.run(document, {
     elementRef: true,
     runOnly: {

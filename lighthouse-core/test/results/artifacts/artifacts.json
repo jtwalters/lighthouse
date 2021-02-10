@@ -1758,7 +1758,7 @@
           },
           {
             "impact": "critical",
-            "html": "<img src=\"blob:http://localhost:10200/54001a08-60c6-4ea1-aeec-ca1831fd81f1\">",
+            "html": "<img src=\"blob:http://localhost:10200/65381135-47e9-4deb-9f84-bfc18dbf2534\">",
             "target": [
               "img:nth-child(37)"
             ],
@@ -1775,13 +1775,13 @@
                 "width": 16,
                 "height": 16
               },
-              "snippet": "<img src=\"blob:http://localhost:10200/54001a08-60c6-4ea1-aeec-ca1831fd81f1\">",
+              "snippet": "<img src=\"blob:http://localhost:10200/65381135-47e9-4deb-9f84-bfc18dbf2534\">",
               "nodeLabel": "img"
             }
           },
           {
             "impact": "critical",
-            "html": "<img src=\"filesystem:http://localhost:10200/temporary/empty-0.04643974057459421.png\">",
+            "html": "<img src=\"filesystem:http://localhost:10200/temporary/empty-0.41446737360752417.png\">",
             "target": [
               "img:nth-child(43)"
             ],
@@ -1798,7 +1798,7 @@
                 "width": 16,
                 "height": 16
               },
-              "snippet": "<img src=\"filesystem:http://localhost:10200/temporary/empty-0.04643974057459421.png\">",
+              "snippet": "<img src=\"filesystem:http://localhost:10200/temporary/empty-0.41446737360752417.png\">",
               "nodeLabel": "img"
             }
           }
@@ -2448,7 +2448,7 @@
         ]
       }
     ],
-    "version": "4.1.1"
+    "version": "4.1.2"
   },
   "AnchorElements": [
     {
