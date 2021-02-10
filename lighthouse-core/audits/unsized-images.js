@@ -46,11 +46,11 @@ class UnsizedImages extends Audit {
    * @return {boolean}
    */
   static isValidAttr(attrValue) {
-    // First, superweird edge case of using the positive-sign. The the spec _sorta_ says it's valid...
+    // First, superweird edge case of using the positive-sign. The spec _sorta_ says it's valid...
     // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#rules-for-parsing-integers
     //   > Otherwise, if the character is … (+): Advance position to the next character.
     //   > (The "+" is ignored, but it is not conforming.)
-    // lol.  Chrome (at least) doesn't ignore but rejects this as a non-conforming value.
+    // lol.  Irrelevant though b/c Chrome (at least) doesn't ignore. It rejects this as a non-conforming value.
     if (attrValue.startsWith('+')) return false;
 
     // parseInt isn't exactly the same as the html's spec for parsing integers, but it's close enough

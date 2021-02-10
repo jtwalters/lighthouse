@@ -251,7 +251,7 @@ describe('Sized images audit', () => {
       expect(result.score).toEqual(1);
     });
 
-    it('passes when an image has is unsized, but its parent is not displayed..', async () => {
+    it('passes when an image is unsized, but its parent is not displayed', async () => {
       const result = await runAudit({
         attributeWidth: '',
         attributeHeight: '',
