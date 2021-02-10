@@ -6,6 +6,12 @@
 
 /* eslint-disable */
 
+/** Create long tasks on the main thread. */
+function stall(ms) {
+  const start = performance.now();
+  while (performance.now() - start < ms) ;
+}
+
 // largest-contentful-paint-element: add the largest element later in page load
 // layout-shift-elements: shift down the `<h1>` in the page
 setTimeout(() => {
