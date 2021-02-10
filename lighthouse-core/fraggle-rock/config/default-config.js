@@ -12,11 +12,15 @@ const defaultConfig = {
   artifacts: [
     {id: 'Accessibility', gatherer: 'accessibility'},
     {id: 'ConsoleMessages', gatherer: 'console-messages'},
+    {id: 'DevtoolsLog', gatherer: 'devtools-log'},
+
+    // Artifact copies are renamed for compatibility with legacy artifacts.
+    {id: 'devtoolsLogs', gatherer: 'devtools-log-compat'},
   ],
   navigations: [
     {
       id: 'default',
-      artifacts: ['Accessibility', 'ConsoleMessages'],
+      artifacts: ['Accessibility', 'ConsoleMessages', 'DevtoolsLog', 'devtoolsLogs'],
     },
   ],
   settings: legacyDefaultConfig.settings,
